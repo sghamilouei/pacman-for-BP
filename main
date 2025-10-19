@@ -1,0 +1,320 @@
+#include <iostream>
+#include <conio.h>
+#include <windows.h>
+#include <cstdlib>
+
+using namespace std;
+
+const int satr = 11;
+const int sotoon = 41;
+
+char map[satr][sotoon] = {        
+    "########################################",
+    "#......................................#",
+    "#..###.###..###.###..###.###..###.###..#",
+    "#..#.....#........... ........#.....#..#",
+    "#..#.....#........... ........#.....#..#",
+    "#..###.###..###.###..###.###..###.###..#",
+    "........................................",
+    "#..#######..#######..#######..###.###..#",
+    "#..#.....#........#..#..............#..#",
+    "#.............................#.....#..#",
+    "########################################"
+};
+
+int i_p = 1;
+int j_p = 1;
+int * i_p_ptr = & i_p;
+int * j_p_ptr = & j_p;
+
+
+int i_g1 = 9;
+int j_g1 = 12;
+int * i_g1_ptr = & i_g1;
+int * j_g1_ptr = & j_g1;
+
+int i_g2 = 9;
+int j_g2 = 20;
+int * i_g2_ptr = & i_g2;
+int * j_g2_ptr = & j_g2;
+
+int i_g3 = 6;
+int j_g3 = 10;
+int * i_g3_ptr = & i_g3;
+int * j_g3_ptr = & j_g3;
+
+int i_g4 = 3;
+int j_g4 = 10;
+int * i_g4_ptr = & i_g4;
+int * j_g4_ptr = & j_g4;
+
+/* ---------------------------*/
+int point_counter = 0;
+int pacman_lives = 3;
+
+char pacman = 'e';
+char ghost = 'g';
+char food = '.';
+char wall = '#';
+
+char latter_input = 's';
+
+
+void initialize_map(){
+
+    system("cls");
+    map[i_p][j_p] = pacman;
+    map[i_g1][j_g1] = ghost;
+    map[i_g2][j_g2] = ghost;
+    map[i_g3][j_g3] = ghost;
+    map[i_g4][j_g4] = ghost;
+    
+}
+
+void printmap(){
+    COORD coord = {0, 0};
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+    for(int i=0; i<satr; i++){
+        for(int j=0; j<sotoon; j++){
+            cout << map[i][j] << " ";
+        }
+        cout << endl;
+    }
+    cout << "\n Your LIVES ARE : " << pacman_lives << endl;
+    cout << " Your SCORE IS : " << point_counter << endl;
+    cout << "\n \n Press E to exit . . ." << endl;
+}
+
+void move(char key,char obj, int * i_n_ptr , int * j_n_ptr){
+    if(key == 'a' || key == 'w' || key == 's' || key == 'd'){
+        latter_input = key;
+        
+        switch (key){
+
+        case 'w':
+            if(map[*(i_n_ptr)-1][* j_n_ptr] == wall){
+                break;
+            }else if((map[*(i_n_ptr)-1][* j_n_ptr] == food) && (obj == pacman)){
+                map[* i_n_ptr][* j_n_ptr] = ' ';
+                * i_n_ptr -= 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                point_counter += 1;
+                break;             
+            }else if((map[*(i_n_ptr)-1][* j_n_ptr] == ghost) && (obj == ghost)){
+                break;             
+            }else if((map[*(i_n_ptr)-1][* j_n_ptr] == ghost) && (obj == pacman)){
+                map[* i_n_ptr][* j_n_ptr] = ' ';
+                * i_n_ptr -= 1;
+                map[* i_n_ptr][* j_n_ptr] = ghost;
+                pacman_lives -= 1;
+                Sleep(1000);
+                break;             
+            }else if((map[*(i_n_ptr)-1][* j_n_ptr] == food) && (obj == ghost)){
+                map[* i_n_ptr][* j_n_ptr] = food;
+                * i_n_ptr -= 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                break;             
+            }else if((map[*(i_n_ptr)-1][* j_n_ptr] == ' ') && (obj == ghost)){
+                map[* i_n_ptr][* j_n_ptr] = ' ';
+                * i_n_ptr -= 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                break;             
+            }else if((map[*(i_n_ptr)-1][* j_n_ptr] == pacman) && (obj == ghost)){
+                map[* i_n_ptr][* j_n_ptr] = ' ';
+                * i_n_ptr -= 1;
+                pacman_lives -= 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                Sleep(1000);
+                break;             
+            }else{
+                map[* i_n_ptr][* j_n_ptr] = ' ';
+                * i_n_ptr -= 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                break;
+            }
+
+        case 's':
+            if(map[*(i_n_ptr)+1][* j_n_ptr] == wall){
+                break;
+            }else if((map[*(i_n_ptr)+1][* j_n_ptr] == food) && (obj == pacman)){
+                map[* i_n_ptr][* j_n_ptr] = ' ';
+                * i_n_ptr += 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                point_counter += 1;
+                break;
+            }else if((map[*(i_n_ptr)+1][* j_n_ptr] == ghost) && (obj == ghost)){
+                break;
+            }else if((map[*(i_n_ptr)+1][* j_n_ptr] == ghost) && (obj == pacman)){
+                pacman_lives -= 1;
+                Sleep(1000);
+                break;
+            }else if((map[*(i_n_ptr)+1][* j_n_ptr] == food) && (obj == ghost)){
+                map[* i_n_ptr][* j_n_ptr] = food;
+                * i_n_ptr += 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                break;
+            }else if((map[*(i_n_ptr)+1][* j_n_ptr] == ' ') && (obj == ghost)){
+                map[* i_n_ptr][* j_n_ptr] = ' ';
+                * i_n_ptr += 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                break;
+            }else if((map[*(i_n_ptr)+1][* j_n_ptr] == pacman) && (obj == ghost)){
+                pacman_lives -= 1;
+                Sleep(1000);
+                break;
+            }else{
+                map[* i_n_ptr][* j_n_ptr] = ' ';
+                * i_n_ptr += 1;
+                map[* i_n_ptr][* j_n_ptr] = pacman;
+                break;
+            }
+
+        case 'd':
+            if(map[* i_n_ptr][*(j_n_ptr)+1] == wall){
+                break;
+            }else if((map[* i_n_ptr][*(j_n_ptr)+1] == food) && (obj == pacman)){
+                map[* i_n_ptr][* j_n_ptr] = ' ';
+                * j_n_ptr += 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                point_counter += 1;
+                break;
+            }else if((map[* i_n_ptr][*(j_n_ptr)+1] == ghost) && (obj == ghost)){
+                break;
+            }else if((map[* i_n_ptr][*(j_n_ptr)+1] == ghost) && (obj == pacman)){
+                pacman_lives -= 1;
+                Sleep(1000);
+                break;
+            }else if((map[* i_n_ptr][*(j_n_ptr)+1] == food) && (obj == ghost)){
+                map[* i_n_ptr][* j_n_ptr] = food;
+                * j_n_ptr += 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                break;
+            }else if((map[* i_n_ptr][*(j_n_ptr)+1] == ' ') && (obj == ghost)){
+                map[* i_n_ptr][* j_n_ptr] = ' ';
+                * j_n_ptr += 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                break;
+            }else if((map[* i_n_ptr][*(j_n_ptr)+1] == pacman) && (obj == ghost)){
+                pacman_lives -= 1;
+                Sleep(1000);
+                break;
+            }else{
+                map[*i_n_ptr][* j_n_ptr] = ' ';
+                * j_p_ptr += 1;
+                map[* i_n_ptr][* j_n_ptr] = pacman;
+                break;
+            }
+
+        case 'a':
+            if(map[* i_n_ptr][*(j_n_ptr)-1] == wall){
+                break;
+            }else if((map[* i_n_ptr][*(j_n_ptr)-1] == food) && (obj == pacman)){
+                map[* i_n_ptr][* j_n_ptr] = ' ';
+                * j_n_ptr -= 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                point_counter += 1;
+                break;
+            }else if((map[* i_n_ptr][*(j_n_ptr)-1] == ghost) && (obj == ghost)){
+                break;
+            }else if((map[* i_n_ptr][*(j_n_ptr)-1] == ghost) && (obj == pacman)){
+                pacman_lives-= 1;
+                Sleep(1000);
+                break;
+            }else if((map[* i_n_ptr][*(j_n_ptr)-1] == food) && (obj == ghost)){
+                map[* i_n_ptr][* j_n_ptr] = food;
+                * j_n_ptr -= 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                break;
+            }else if((map[* i_n_ptr][*(j_n_ptr)-1] == ' ') && (obj == ghost)){
+                map[* i_n_ptr][* j_n_ptr] = ' ';
+                * j_n_ptr -= 1;
+                map[* i_n_ptr][* j_n_ptr] = obj;
+                break;
+            }else if((map[* i_n_ptr][*(j_n_ptr)-1] == pacman) && (obj == ghost)){
+                Sleep(1000);
+                break;
+            }else{
+                map[*i_n_ptr][*j_n_ptr] = ' ';
+                * j_n_ptr -= 1;
+                map[* i_n_ptr][* j_n_ptr] = pacman;
+                break;
+            }
+        }
+
+        if((* i_n_ptr == 6) && (* j_n_ptr == 0)){
+            map[* i_n_ptr][* j_n_ptr] = ' ';
+            * i_n_ptr = 6;
+            * j_n_ptr = 40;
+            map[* i_n_ptr][* j_n_ptr] = pacman;
+        }else if((* i_n_ptr == 6) && (* j_n_ptr == 40)){
+            map[i_p][j_p] = ' ';
+            * i_n_ptr = 6;
+            * j_n_ptr = 0;
+            map[* i_n_ptr][* j_n_ptr] = pacman;
+        }
+    
+    }else{
+        move(latter_input ,obj ,i_n_ptr ,j_n_ptr);
+    }
+
+}
+
+void GHOST(){
+    char ghost_directions[4] = {'a', 'd', 'w', 's'};
+    char randomdir[4];
+    for(int i=0; i<4; i++){
+        randomdir[i] = ghost_directions[rand()%4];
+    }
+    move(randomdir[0],ghost,i_g1_ptr,j_g1_ptr);
+    move(randomdir[1],ghost,i_g2_ptr,j_g2_ptr);
+    move(randomdir[2],ghost,i_g3_ptr,j_g3_ptr);
+    move(randomdir[3],ghost,i_g4_ptr,j_g4_ptr);
+}
+
+
+int main(){
+    initialize_map();
+    printmap();
+
+    char input;
+
+    while(pacman_lives > 0){
+
+        input = getch();
+        
+        if (input == 'e' || input == 'E'){
+            exit(0);
+        }
+
+        while(!(kbhit())){    
+         
+        move(input,pacman,i_p_ptr,j_p_ptr);
+        GHOST();
+
+        printmap();
+
+        Sleep(20);
+
+        if(point_counter == 150){
+            Sleep(3000);
+            system("cls");
+            cout << "____    ____  ______    __    __     ____    __    ____  ______   .__   __. " << endl;
+            cout << "\\   \\  /   / /  __  \\  |  |  |  |    \\   \\  /  \\  /   / /  __  \\  |  \\ |  | " << endl;
+            cout << " \\   \\/   / |  |  |  | |  |  |  |     \\   \\/    \\/   / |  |  |  | |   \\|  | " << endl;
+            cout << "  \\_    _/  |  |  |  | |  |  |  |      \\            /  |  |  |  | |  . `  | " << endl;
+            cout << "    |  |    |  `--'  | |  `--'  |       \\    /\\    /   |  `--'  | |  |\\   | " << endl;
+            cout << "    |__|     \\______/   \\______/         \\__/  \\__/     \\______/  |__| \\__| " << endl;
+            Sleep(5000);
+            exit(0);
+        }
+        }
+    }
+    system("cls");
+    cout << " __  ______  __  __   __    ____  ___________" << endl;
+    cout << " \\ \\/ / __ \\/ / / /  / /   / __ \\/ ___/_  __/" << endl;
+    cout << "  \\  / / / / / / /  / /   / / / /\\__ \\ / /   " << endl;
+    cout << "  / / /_/ / /_/ /  / /___/ /_/ /___/ // /    " << endl;
+    cout << " /_/\\____/\\____/  /_____/\\____//____//_/     " << endl;
+    Sleep(5000);
+    return 0;
+}
